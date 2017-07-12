@@ -1,0 +1,9 @@
+﻿Name: Codesanook.AmazonS3
+AntiForgery: enabled
+Author: Codesanook Team
+Website: http://orchardproject.net
+Version: 1.1
+OrchardVersion: 1.0
+Category: Media
+Description: Amazon S3 Storage Provider for Media Library.
+Dependencies: Codesanook.Common, Codesanook.Configuration
