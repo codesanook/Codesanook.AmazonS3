@@ -9,35 +9,14 @@ namespace Codesanook.AmazonS3.Services
     {
         private readonly S3DirectoryInfo _s3DirectoryInfo;
 
-        public AmazonS3StorageFolder(S3DirectoryInfo s3DirectoryInfo)
-        {
+        public AmazonS3StorageFolder(S3DirectoryInfo s3DirectoryInfo) =>
             _s3DirectoryInfo = s3DirectoryInfo;
-        }
 
-        public string GetPath()
-        {
-            var path = Regex.Replace(_s3DirectoryInfo.FullName, @"^[^:]*:", "");
-            return path;
-        }
-
-        public string GetName()
-        {
-            return _s3DirectoryInfo.Name;
-        }
-
-        public long GetSize()
-        {
-            return 1;
-        }
-
-        public DateTime GetLastUpdated()
-        {
-            return DateTime.MinValue;
-        }
-
-        public IStorageFolder GetParent()
-        {
-            return new AmazonS3StorageFolder(_s3DirectoryInfo.Parent);
-        }
+        public string GetPath() => Regex.Replace(_s3DirectoryInfo.FullName, @"^[^:]*:", "");
+        public string GetName() => _s3DirectoryInfo.Name;
+        public long GetSize() => 1;
+        public DateTime GetLastUpdated() => DateTime.MinValue;
+        public IStorageFolder GetParent() =>
+            new AmazonS3StorageFolder(_s3DirectoryInfo.Parent);
     }
 }

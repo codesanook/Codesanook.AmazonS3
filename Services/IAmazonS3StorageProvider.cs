@@ -8,8 +8,13 @@ namespace Codesanook.AmazonS3.Services
 {
     public interface IAmazonS3StorageProvider : IStorageProvider
     {
-        List<S3Object> ListObjects(string prefix, Func<S3Object, bool> filterfFunc = null);
+        List<S3Object> ListObjects(
+            string prefix,
+            Func<S3Object, bool> filterfFunc = null
+        );
+
         Stream GetObjectStream(string path);
         void PublishFile(string path);
+        void CreateBucketIfNotExist(); 
     }
 }

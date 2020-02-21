@@ -1,0 +1,34 @@
+@model Codesanook.AmazonS3.Models.AwsS3SettingPart
+<fieldset>
+    <legend>@T("AWS S3 Setting")</legend>
+
+    <div>
+        @Html.LabelFor(m => m.UseLocalS3rver)
+        @Html.CheckBoxFor(m => m.UseLocalS3rver)
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.LocalS3rverServiceUrl)
+        @Html.TextBoxFor(m => m.LocalS3rverServiceUrl, new { @class = "text large" })
+        @Html.ValidationMessageFor(m => m.LocalS3rverServiceUrl, "*")
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.AwsS3ServiceUrl)
+        @Html.TextBoxFor(m => m.AwsS3ServiceUrl, new { @class = "text large" })
+        @Html.ValidationMessageFor(m => m.AwsS3ServiceUrl, "*")
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.AwsS3BucketName)
+        @Html.TextBoxFor(m => m.AwsS3BucketName, new { @class = "text large" })
+        @Html.ValidationMessageFor(m => m.AwsS3BucketName, "*")
+    </div>
+
+    <div>
+        @Html.LabelFor(m => m.AwsS3PublicUrl)
+        @Html.TextBoxFor(m => m.AwsS3PublicUrl, new { @class = "text large" })
+        @Html.ValidationMessageFor(m => m.AwsS3PublicUrl, "*")
+    </div>
+
+</fieldset>

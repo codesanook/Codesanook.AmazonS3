@@ -63,6 +63,9 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations">
@@ -105,13 +108,13 @@
     <Content Include="Module.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\AmazonS3Commands.cs" />
-    <Compile Include="Services\AmazonS3Service.cs" />
+    <Compile Include="Drivers\AwsS3SettingPartDriver.cs" />
+    <Compile Include="Handlers\AwsS3SettingPartHandler.cs" />
+    <Compile Include="Models\AwsS3SettingPart.cs" />
     <Compile Include="Services\AmazonS3StorageFile.cs" />
     <Compile Include="Services\AmazonS3StorageFolder.cs" />
     <Compile Include="Services\AmazonS3StorageProvider.cs" />
     <Compile Include="Services\AmazonS3StreamProxy.cs" />
-    <Compile Include="Services\IAmazonS3Service.cs" />
     <Compile Include="Services\IAmazonS3StorageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +125,10 @@
       <Project>{2d1d92bb-4555-4cbe-8d0e-63563d6ce4c6}</Project>
       <Name>Orchard.Framework</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Core\Orchard.Core.csproj">
+      <Project>{9916839C-39FC-4CEB-A5AF-89CA7E87119F}</Project>
+      <Name>Orchard.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Codesanook.Configuration\Codesanook.Configuration.csproj">
       <Project>{55a5af31-438d-4712-b8b6-ee01327842ae}</Project>
       <Name>Codesanook.Configuration</Name>
@@ -131,7 +138,15 @@
       <Name>Orchard.Media</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\EditorTemplates\Parts\AwsS3Setting.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
