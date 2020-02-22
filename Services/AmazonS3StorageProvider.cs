@@ -16,7 +16,7 @@ using Orchard.Settings;
 using Orchard.ContentManagement;
 using Codesanook.AmazonS3.Models;
 using Amazon.Runtime;
-using Codesanook.Configuration.Models;
+using Codesanook.Common.Models;
 
 namespace Codesanook.AmazonS3.Services {
     [OrchardSuppressDependency("Orchard.FileSystems.Media.FileSystemStorageProvider")]
@@ -45,10 +45,10 @@ namespace Codesanook.AmazonS3.Services {
             }
             else {
 
-                var awsSetting = siteService.GetSiteSettings().As<AwsSettingPart>();
+                var sharedSetting = siteService.GetSiteSettings().As<SharedSettingPart>();
                 var credentials = new BasicAWSCredentials(
-                    awsSetting.AwsAccessKey,
-                    awsSetting.AwsSecretKey
+                    sharedSetting.AwsAccessKey,
+                    sharedSetting.AwsSecretKey
                 );
                 var config = new AmazonS3Config {
                     ServiceURL = awsS3Setting.AwsS3ServiceUrl,

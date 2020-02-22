@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Orchard.ContentManagement;
+﻿using Orchard.ContentManagement;
 
 namespace Codesanook.AmazonS3.Models {
     public class AwsS3SettingPart : ContentPart {
@@ -24,7 +23,6 @@ namespace Codesanook.AmazonS3.Models {
             set => this.Store(x => x.AwsS3BucketName, value);
         }
 
-        [JsonProperty]
         public string AwsS3PublicUrl {
             get => this.Retrieve(x => x.AwsS3PublicUrl);
             set => this.Store(x => x.AwsS3PublicUrl, value);

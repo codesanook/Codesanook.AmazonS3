@@ -63,9 +63,6 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations">
@@ -129,9 +126,9 @@
       <Project>{9916839C-39FC-4CEB-A5AF-89CA7E87119F}</Project>
       <Name>Orchard.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Codesanook.Configuration\Codesanook.Configuration.csproj">
-      <Project>{55a5af31-438d-4712-b8b6-ee01327842ae}</Project>
-      <Name>Codesanook.Configuration</Name>
+    <ProjectReference Include="..\Codesanook.Common\Codesanook.Common.csproj">
+      <Project>{7104e4b7-0fdc-4734-a812-1c6a8f71635d}</Project>
+      <Name>Codesanook.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Orchard.Media\Orchard.Media.csproj">
       <Project>{d9a7b330-cd22-4da1-a95a-8de1982ad8eb}</Project>
