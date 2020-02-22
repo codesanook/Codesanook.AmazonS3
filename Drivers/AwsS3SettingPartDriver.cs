@@ -25,14 +25,16 @@ namespace Codesanook.AmazonS3 {
             AwsS3SettingPart part,
             dynamic shapeHelper
         ) {
-
-            return ContentShape("Parts_AwsS3Setting",
+            // If we define shape type, we need to specify it in Placement.info.
+            // Unless it won't show up.
+            return ContentShape(
+                "Parts_AwsS3Setting", // Use in Placement.info
                 () => shapeHelper.EditorTemplate(
-                        TemplateName: "Parts/AwsS3Setting",
-                        Model: part,
-                        Prefix: Prefix
-                    )
-                ).OnGroup("Codesanook Module"); // Show setting in group
+                    TemplateName: "Parts/AwsS3Setting",
+                    Model: part,
+                    Prefix: Prefix
+                )
+            ).OnGroup("AWS S3"); // Show setting in group
         }
 
         protected override DriverResult Editor(

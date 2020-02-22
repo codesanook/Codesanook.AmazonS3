@@ -1,7 +1,4 @@
 <Placement>
-</Placement>
-
-<Placement>
-  <!--shape type-->
-  <Place Parts_ModuleSetting="Content:1"/>
+  <!-- shape type -->
+  <Place Parts_AwsS3Setting="Content:1"/>
 </Placement>

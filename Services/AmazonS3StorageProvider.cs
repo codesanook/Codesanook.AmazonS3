@@ -15,51 +15,29 @@ using UrlHelper = Flurl.Url;
 using Orchard.Settings;
 using Orchard.ContentManagement;
 using Codesanook.AmazonS3.Models;
-using Amazon.Runtime;
-using Codesanook.Common.Models;
+using Amazon;
 
 namespace Codesanook.AmazonS3.Services {
     [OrchardSuppressDependency("Orchard.FileSystems.Media.FileSystemStorageProvider")]
     public class AmazonS3StorageProvider : IAmazonS3StorageProvider, IStorageProvider {
+        private readonly IAmazonS3Service amazonS3Service;
         private readonly ISiteService siteService;
 
         public AmazonS3StorageProvider(
+            IAmazonS3Service amazonS3Service,
             ISiteService siteService
         ) {
+            this.amazonS3Service = amazonS3Service;
             this.siteService = siteService;
         }
 
         private AwsS3SettingPart GetAwsS3Setting()
             => siteService.GetSiteSettings().As<AwsS3SettingPart>();
 
-        private IAmazonS3 GetS3Client() {
-            var awsS3Setting = GetAwsS3Setting();
-            if (awsS3Setting.UseLocalS3rver) {
-                var credentials = new BasicAWSCredentials("", "");
-                var config = new AmazonS3Config {
-                    ServiceURL = awsS3Setting.LocalS3rverServiceUrl,
-                    UseHttp = true,
-                    ForcePathStyle = true,
-                };
-                return new AmazonS3Client(credentials, config);
-            }
-            else {
-
-                var sharedSetting = siteService.GetSiteSettings().As<SharedSettingPart>();
-                var credentials = new BasicAWSCredentials(
-                    sharedSetting.AwsAccessKey,
-                    sharedSetting.AwsSecretKey
-                );
-                var config = new AmazonS3Config {
-                    ServiceURL = awsS3Setting.AwsS3ServiceUrl,
-                    UseHttp = false,
-                };
-                return new AmazonS3Client(credentials, config);
-            }
+        public bool FileExists(string path) {
+            return GetS3File(path).Exists;
 
         }
-
-        public bool FileExists(string path) => GetS3File(path).Exists;
 
         public string GetPublicUrl(string path) {
             var setting = GetAwsS3Setting();
@@ -84,19 +62,17 @@ namespace Codesanook.AmazonS3.Services {
             return url.Substring(rootPath.Length);
         }
 
-        public IStorageFile GetFile(string path) =>
-            new AmazonS3StorageFile(GetS3File(path), this);
+        public IStorageFile GetFile(string path) => new AmazonS3StorageFile(GetS3File(path), this);
 
         private S3FileInfo GetS3File(string path) {
             var setting = GetAwsS3Setting();
-            using (var s3Client = GetS3Client()) {
-                path = CleanPath(path);
-                var file = new S3FileInfo(
-                    s3Client,
-                    setting.AwsS3BucketName,
-                    path);
-                return file;
-            }
+            path = CleanPath(path);
+            var s3Client = amazonS3Service.GetS3Client();
+            var file = new S3FileInfo(
+                s3Client,
+                setting.AwsS3BucketName,
+                path);
+            return file;
         }
 
         public static string CleanPath(string path) {
@@ -110,15 +86,6 @@ namespace Codesanook.AmazonS3.Services {
             return path;
         }
 
-        //private string CleanFolderPath(string path)
-        //{
-        //    path = CleanPath(path);
-        //    path = Regex.Replace(path, @"[\\]$", "") + "\\";
-        //    if (path == "\\")
-        //        return "";
-        //    return path;
-        //}
-
         public static string PathToKey(string path) {
             var result = Regex.Replace(path, @"^[^:]+\:", "");
             result = result.Replace("\\", "/");
@@ -126,19 +93,19 @@ namespace Codesanook.AmazonS3.Services {
             return result;
         }
 
-        public IEnumerable<IStorageFile> ListFiles(string path) =>
-            GetDirectory(CleanPath(path))
+        public IEnumerable<IStorageFile> ListFiles(string path) {
+            return GetDirectory(CleanPath(path))
             .GetFiles()
             .Where(x => !x.Name.EndsWith("_$folder$"))
             .Select(x => new AmazonS3StorageFile(x, this)).ToList();
+        }
 
         public bool FolderExists(string path) => GetDirectory(path).Exists;
 
-        public IEnumerable<IStorageFolder> ListFolders(string path) {
-            var dir = GetDirectory(path);
-            return dir.GetDirectories("*", SearchOption.TopDirectoryOnly)
-                .Select(x => new AmazonS3StorageFolder(x)).ToList();
-        }
+        public IEnumerable<IStorageFolder> ListFolders(string path) =>
+            GetDirectory(path)
+            .GetDirectories("*", SearchOption.TopDirectoryOnly)
+            .Select(x => new AmazonS3StorageFolder(x)).ToList();
 
         public bool TryCreateFolder(string path) {
             try {
@@ -152,18 +119,16 @@ namespace Codesanook.AmazonS3.Services {
         }
 
         public void CreateFolder(string path) => GetDirectory(path).Create();
-
         public void DeleteFolder(string path) => GetDirectory(path).Delete();
 
         private S3DirectoryInfo GetDirectory(string path) {
-            using (var s3Client = GetS3Client()) {
-                var setting = GetAwsS3Setting();
-                return new S3DirectoryInfo(
-                    s3Client,
-                    setting.AwsS3BucketName,
-                    CleanPath(path)
-                );
-            }
+            var setting = GetAwsS3Setting();
+            var s3Client = amazonS3Service.GetS3Client();
+            return new S3DirectoryInfo(
+                s3Client,
+                setting.AwsS3BucketName,
+                CleanPath(path)
+            );
         }
 
         public void RenameFolder(string oldPath, string newPath) {
@@ -184,21 +149,19 @@ namespace Codesanook.AmazonS3.Services {
 
         public void CopyFile(string originalPath, string duplicatePath) {
             var file = GetS3File(originalPath);
-
             duplicatePath = CleanPath(duplicatePath);
             file.CopyToLocal(duplicatePath);
         }
 
         public void PublishFile(string path) {
             var key = PathToKey(path);
-            using (var s3Client = GetS3Client()) {
-                var setting = GetAwsS3Setting();
-                s3Client.PutACL(new PutACLRequest {
-                    BucketName = setting.AwsS3BucketName,
-                    Key = key,
-                    CannedACL = S3CannedACL.PublicRead
-                });
-            }
+            var setting = GetAwsS3Setting();
+            var s3Client = amazonS3Service.GetS3Client();
+            s3Client.PutACL(new PutACLRequest {
+                BucketName = setting.AwsS3BucketName,
+                Key = key,
+                CannedACL = S3CannedACL.PublicRead
+            });
         }
 
         public IStorageFile CreateFile(string path) {
@@ -231,8 +194,7 @@ namespace Codesanook.AmazonS3.Services {
             }
         }
 
-        public string Combine(string path1, string path2) =>
-            CleanPath(PathUtils.Combine(path1, path2));
+        public string Combine(string path1, string path2) => CleanPath(PathUtils.Combine(path1, path2));
 
         public List<S3Object> ListObjects(string prefix, Func<S3Object, bool> filterfFunc = null) {
             try {
@@ -249,16 +211,15 @@ namespace Codesanook.AmazonS3.Services {
                 };
 
                 do {
-                    using (var s3Client = GetS3Client()) {
-                        var response = s3Client.ListObjects(request);
-                        result.AddRange(response.S3Objects.Where(x => filterfFunc(x)));
+                    var s3Client = amazonS3Service.GetS3Client();
+                    var response = s3Client.ListObjects(request);
+                    result.AddRange(response.S3Objects.Where(x => filterfFunc(x)));
 
-                        if (response.IsTruncated && response.S3Objects.Any()) {
-                            request.Marker = response.NextMarker;
-                        }
-                        else {
-                            break;
-                        }
+                    if (response.IsTruncated && response.S3Objects.Any()) {
+                        request.Marker = response.NextMarker;
+                    }
+                    else {
+                        break;
                     }
                 } while (request != null);
                 return result;
@@ -275,54 +236,23 @@ namespace Codesanook.AmazonS3.Services {
         public void CreateBucketIfNotExist() {
             //TODO trim space
             var setting = GetAwsS3Setting();
-            using (var client = GetS3Client()) {
-                var s3directory = new S3DirectoryInfo(client, setting.AwsS3BucketName);
-                if (!s3directory.Exists) {
-                    // create a new buck if not exist
-                    // Construct request
-                    var request = new PutBucketRequest {
-                        BucketName = setting.AwsS3BucketName,
-                        BucketRegion = S3Region.APS1,      // set region to asia pacific south east => Singapore 
-                        CannedACL = S3CannedACL.Private // make bucket publicly readable
-                    };
-                    // Issue call
-                    client.PutBucket(request);
-                }
+            var client = amazonS3Service.GetS3Client();
+            var s3directory = new S3DirectoryInfo(client, setting.AwsS3BucketName);
+
+            if (!s3directory.Exists) {
+                // Create a new buck if not exist
+                var request = new PutBucketRequest {
+                    BucketName = setting.AwsS3BucketName,
+                    // To get localstack work we need to set bucket ACL to public read
+                    // https://github.com/localstack/localstack/issues/406
+                    CannedACL = setting.UseLocalStackS3
+                        ? S3CannedACL.PublicRead
+                        : S3CannedACL.Private
+                };
+
+                client.PutBucket(request);
             }
         }
-
-
-        //private Stream Download(string key) {
-        //    var stream = service.TransferUtility.OpenStream(new TransferUtilityOpenStreamRequest() {
-        //        BucketName = "",
-        //        Key = key,
-        //    });
-        //    return stream;
-        //}
-
-        //    private bool Upload(Stream stream, string fileKey, bool asPublic = false, bool closeStream = false) {
-        //        try {
-        //            var request = new TransferUtilityUploadRequest() {
-        //                BucketName = "",
-        //                Key = fileKey,
-        //                InputStream = stream,
-        //                AutoCloseStream = closeStream,
-        //                AutoResetStreamPosition = true,
-        //            };
-        //            if (asPublic) {
-        //                request.CannedACL = S3CannedACL.PublicRead;
-        //            }
-
-        //            service.TransferUtility.Upload(request);
-        //            if (stream.CanSeek) {
-        //                stream.Seek(0, SeekOrigin.Begin);
-        //            }
-        //        }
-        //        catch {
-        //            return false;
-        //        }
-        //        return true;
-        //    }
-        //}
     }
 }
+

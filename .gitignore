@@ -1,3 +1,4 @@
 bin
 obj
-s3root
+# Ignore docker host volume 
+localstack-data

@@ -50,6 +50,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\AWSSDK.Core.3.3.23.1\lib\net45\AWSSDK.Core.dll</HintPath>
     </Reference>
@@ -101,17 +104,19 @@
   <ItemGroup>
     <Content Include="Web.config" />
     <Content Include="Properties\AssemblyInfo.cs" />
-    <Content Include="Placement.info" />
     <Content Include="Module.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentModule.cs" />
     <Compile Include="Drivers\AwsS3SettingPartDriver.cs" />
     <Compile Include="Handlers\AwsS3SettingPartHandler.cs" />
     <Compile Include="Models\AwsS3SettingPart.cs" />
+    <Compile Include="Services\AmazonS3Service.cs" />
     <Compile Include="Services\AmazonS3StorageFile.cs" />
     <Compile Include="Services\AmazonS3StorageFolder.cs" />
     <Compile Include="Services\AmazonS3StorageProvider.cs" />
     <Compile Include="Services\AmazonS3StreamProxy.cs" />
+    <Compile Include="Services\IAmazonS3Service.cs" />
     <Compile Include="Services\IAmazonS3StorageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +148,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Placement.info" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Docker\docker-compose.yml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

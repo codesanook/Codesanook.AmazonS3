@@ -3,14 +3,14 @@
 namespace Codesanook.AmazonS3.Models {
     public class AwsS3SettingPart : ContentPart {
 
-        public bool UseLocalS3rver {
-            get => this.Retrieve(x => x.UseLocalS3rver);
-            set => this.Store(x => x.UseLocalS3rver, value);
+        public bool UseLocalStackS3 {
+            get => this.Retrieve(x => x.UseLocalStackS3);
+            set => this.Store(x => x.UseLocalStackS3, value);
         }
 
-        public string LocalS3rverServiceUrl {
-            get => this.Retrieve(x => x.LocalS3rverServiceUrl);
-            set => this.Store(x => x.LocalS3rverServiceUrl, value);
+        public string LocalStackS3ServiceUrl {
+            get => this.Retrieve(x => x.LocalStackS3ServiceUrl);
+            set => this.Store(x => x.LocalStackS3ServiceUrl, value);
         }
 
         public string AwsS3ServiceUrl {
