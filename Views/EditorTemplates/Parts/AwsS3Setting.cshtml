@@ -15,6 +15,13 @@
     </div>
 
     <div>
+        @Html.LabelFor(m => m.AwsS3ServiceUrl)
+        @Html.TextBoxFor(m => m.AwsS3ServiceUrl, new { @class = "text large" })
+        @Html.ValidationMessageFor(m => m.AwsS3ServiceUrl, "*")
+        <span class="hint">e.g. https://s3.ap-southeast-1.amazonaws.com</span>
+    </div>
+
+    <div>
         @Html.LabelFor(m => m.AwsS3BucketName)
         @Html.TextBoxFor(m => m.AwsS3BucketName, new { @class = "text large" })
         @Html.ValidationMessageFor(m => m.AwsS3BucketName, "*")
@@ -28,10 +35,4 @@
         <span class="hint">e.g. http://static.example.com for CNAME that points to static.example.com.s3.amazonaws.com.</span>
     </div>
 
-    <div>
-        @Html.LabelFor(m => m.AwsS3ServiceUrl)
-        @Html.TextBoxFor(m => m.AwsS3ServiceUrl, new { @class = "text large" })
-        @Html.ValidationMessageFor(m => m.AwsS3ServiceUrl, "*")
-        <span class="hint">e.g. https://s3.ap-southeast-1.amazonaws.com</span>
-    </div>
 </fieldset>
