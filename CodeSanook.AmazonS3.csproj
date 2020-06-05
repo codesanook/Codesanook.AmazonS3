@@ -111,12 +111,10 @@
     <Compile Include="Drivers\AwsS3SettingPartDriver.cs" />
     <Compile Include="Handlers\AwsS3SettingPartHandler.cs" />
     <Compile Include="Models\AwsS3SettingPart.cs" />
-    <Compile Include="Services\AmazonS3Service.cs" />
     <Compile Include="Services\AmazonS3StorageFile.cs" />
     <Compile Include="Services\AmazonS3StorageFolder.cs" />
     <Compile Include="Services\AmazonS3StorageProvider.cs" />
     <Compile Include="Services\AmazonS3StreamProxy.cs" />
-    <Compile Include="Services\IAmazonS3Service.cs" />
     <Compile Include="Services\IAmazonS3StorageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +144,7 @@
   <ItemGroup>
     <Content Include="Views\EditorTemplates\Parts\AwsS3Setting.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Placement.info" />
   </ItemGroup>
