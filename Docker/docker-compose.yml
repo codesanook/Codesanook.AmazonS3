@@ -1,4 +1,4 @@
-﻿version: '3.7'
+﻿version: "3.8"
 # Useful links
 # localstack overview https://github.com/localstack/localstack#overview
 # https://dev.to/goodidea/how-to-fake-aws-locally-with-localstack-27me
@@ -7,13 +7,23 @@ services:
   localstack-s3:
     image: localstack/localstack:latest
     container_name: localstack-s3
+
+    # List of all configurations that can be passed as environment variables
+    # https://github.com/localstack/localstack#configurations
     environment:
-     - SERVICES=s3:4572 # Enable S3 at default port 
+     - SERVICES=s3, ses # Enabled services 
      # https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints
      - DEFAULT_REGION=ap-southeast-1 # Asia Pacific (Singapore)
      - DATA_DIR=/localstack-data/s3
     ports:
-     - "4572:4572" # S3 default port
-     - "8000:8080" # local stack web UI port
+     - "4566:4566" # All services' ports
+     - "8000:8080" # LocalStack web UI port
     volumes:
+        # Map host's directory to a container's directory
       - ./localstack-data/s3:/localstack-data/s3
+
+# To test a service with AWS CLI
+# Override a default value 
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html
+# aws --endpoint-url=http://localhost:4566 --region ap-southeast-1 s3 ls
+# mock SES https://github.com/codesanook/sese
