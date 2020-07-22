@@ -20,7 +20,9 @@ namespace Codesanook.AmazonS3 {
                 var awsS3SettingPart = siteSetting.As<AwsS3SettingPart>();
 
                 if (awsS3SettingPart.UseLocalStackS3) {
-                    var credentials = new BasicAWSCredentials("", "");
+                    // Note: it doesn't matter what your AWS key & secret are,
+                    // as long as they aren't empty.
+                    var credentials = new BasicAWSCredentials("test", "test");
                     var config = new AmazonS3Config {
                         ServiceURL = awsS3SettingPart.LocalStackS3ServiceUrl,
                         UseHttp = true,

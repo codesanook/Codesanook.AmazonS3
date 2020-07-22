@@ -1,8 +1,7 @@
 ﻿version: "3.8"
 # Useful links
 # localstack overview https://github.com/localstack/localstack#overview
-# https://dev.to/goodidea/how-to-fake-aws-locally-with-localstack-27me
-# https://www.stevejgordon.co.uk/running-aws-s3-simple-storage-service-using-docker-for-net-core-developers
+# https://blog.jcore.com/2020/04/running-aws-locally-with-localstack/
 services:
   localstack-s3:
     image: localstack/localstack:latest
@@ -11,16 +10,16 @@ services:
     # List of all configurations that can be passed as environment variables
     # https://github.com/localstack/localstack#configurations
     environment:
-     - SERVICES=s3, ses # Enabled services 
+     - SERVICES=s3 # Enable only AWS S3 services
      # https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints
      - DEFAULT_REGION=ap-southeast-1 # Asia Pacific (Singapore)
-     - DATA_DIR=/localstack-data/s3
+     - DATA_DIR=/localstack-data
     ports:
-     - "4566:4566" # All services' ports
+     - "4566-4599:4566-4599" # Ports of the different services
      - "8000:8080" # LocalStack web UI port
     volumes:
         # Map host's directory to a container's directory
-      - ./localstack-data/s3:/localstack-data/s3
+      - ./localstack-data:/localstack-data
 
 # To test a service with AWS CLI
 # Override a default value 

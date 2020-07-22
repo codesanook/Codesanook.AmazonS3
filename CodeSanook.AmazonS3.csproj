@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentModule.cs" />
+    <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Drivers\AwsS3SettingPartDriver.cs" />
     <Compile Include="Handlers\AwsS3SettingPartHandler.cs" />
     <Compile Include="Models\AwsS3SettingPart.cs" />
