@@ -12,7 +12,11 @@
         @Html.LabelFor(m => m.LocalStackS3ServiceUrl)
         @Html.TextBoxFor(m => m.LocalStackS3ServiceUrl, new { @class = "text large" })
         @Html.ValidationMessageFor(m => m.LocalStackS3ServiceUrl, "*")
-        <span class="hint">e.g. http://localhost:4566</span>
+            <span class="hint">e.g. http://localhost:4572</span>
+            <span class="hint">
+                To create a bucket manually use the following command:
+                aws s3api create-bucket --bucket bucket-name --endpoint-url http://localhost:4572 --profile localstack
+            </span>
     </div>
 
     <div>
@@ -21,19 +25,11 @@
         @Html.ValidationMessageFor(m => m.AwsS3ServiceUrl, "*")
         <span class="hint">e.g. https://s3.ap-southeast-1.amazonaws.com for South East Asia</span>
     </div>
-
-    <div>
-        @Html.LabelFor(m => m.AwsS3ServiceUrl)
-        @Html.TextBoxFor(m => m.AwsS3ServiceUrl, new { @class = "text large" })
-        @Html.ValidationMessageFor(m => m.AwsS3ServiceUrl, "*")
-        <span class="hint">e.g. https://s3.ap-southeast-1.amazonaws.com</span>
-    </div>
-
     <div>
         @Html.LabelFor(m => m.AwsS3BucketName)
         @Html.TextBoxFor(m => m.AwsS3BucketName, new { @class = "text large" })
         @Html.ValidationMessageFor(m => m.AwsS3BucketName, "*")
-        <span class="hint">e.g. example-static </span>
+        <span class="hint">e.g. static.example.come</span>
     </div>
 
     <div>

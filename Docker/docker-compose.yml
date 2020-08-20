@@ -15,14 +15,21 @@ services:
      - DEFAULT_REGION=ap-southeast-1 # Asia Pacific (Singapore)
      - DATA_DIR=/localstack-data
     ports:
-     - "4566-4599:4566-4599" # Ports of the different services
+     - "4563-4599:4563-4599" # Ports of the different services
      - "8000:8080" # LocalStack web UI port
     volumes:
         # Map host's directory to a container's directory
       - ./localstack-data:/localstack-data
 
 # To test a service with AWS CLI
-# Override a default value 
+# Override a service URL default value 
 # https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html
-# aws --endpoint-url=http://localhost:4566 --region ap-southeast-1 s3 ls
-# mock SES https://github.com/codesanook/sese
+
+# Create a profile 
+# aws configure --profile localstack
+
+# Create a bucket
+# aws s3api create-bucket --bucket bucket-name --endpoint-url http://localhost:4572 --profile localstack
+
+# List all buckets
+# aws s3api list-bucket --endpoint-url http://localhost:4572 --profile localstack
