@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Web.UI.WebControls;
 using Amazon.S3;
 using Amazon.S3.IO;
@@ -36,19 +35,42 @@ namespace Codesanook.AmazonS3.Services {
 
         public bool FileExists(string path) => GetS3File(path).Exists;
 
-        public string GetPublicUrl(string path) =>
-            UrlHelper.Combine(
-                awsS3SettingPart.Value.AwsS3PublicUrl,
-                awsS3SettingPart.Value.AwsS3BucketName,
-               CleanPath(path).Replace("\\", "/")
-            );
+        public string GetPublicUrl(string path) {
+            var cleanPath = CleanPath(path).Replace("\\", "/");
+            var url =
+                awsS3SettingPart.Value.UseLocalStackS3 ? new[] {
+                    awsS3SettingPart.Value.LocalStackS3ServiceUrl,
+                    awsS3SettingPart.Value.AwsS3BucketName,
+                    cleanPath
+                } :
+                awsS3SettingPart.Value.MapSubdomainToBucketName ? new[] {
+                    awsS3SettingPart.Value.AwsS3BucketName,
+                    cleanPath
+                } :
+                new[] {
+                    awsS3SettingPart.Value.AwsS3ServiceUrl,
+                    awsS3SettingPart.Value.AwsS3BucketName,
+                    cleanPath
+                };
+            return UrlHelper.Combine(url);
+        }
 
         public string GetStoragePath(string url) {
-            var rootPath = UrlHelper.Combine(
-                awsS3SettingPart.Value.AwsS3PublicUrl,
-                awsS3SettingPart.Value.AwsS3BucketName
-            );
 
+            var storageUrl =
+                awsS3SettingPart.Value.UseLocalStackS3 ? new[] {
+                    awsS3SettingPart.Value.LocalStackS3ServiceUrl,
+                    awsS3SettingPart.Value.AwsS3BucketName
+                } :
+                awsS3SettingPart.Value.MapSubdomainToBucketName ? new[] {
+                    awsS3SettingPart.Value.AwsS3BucketName
+                } :
+                new[] {
+                    awsS3SettingPart.Value.AwsS3ServiceUrl,
+                    awsS3SettingPart.Value.AwsS3BucketName
+                };
+
+            var rootPath = UrlHelper.Combine(storageUrl);
             if (string.IsNullOrWhiteSpace(url) || url.Length < rootPath.Length) {
                 return rootPath;
             }
@@ -197,7 +219,7 @@ namespace Codesanook.AmazonS3.Services {
                 // Create a new buck if not exist
                 var request = new PutBucketRequest {
                     BucketName = awsS3SettingPart.Value.AwsS3BucketName,
-                    // To get localstack work we need to set bucket ACL to public read
+                    // To get localstack work,  we need to set bucket ACL to public read
                     // https://github.com/localstack/localstack/issues/406
                     CannedACL = awsS3SettingPart.Value.UseLocalStackS3
                         ? S3CannedACL.PublicRead

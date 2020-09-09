@@ -3,8 +3,8 @@
     <legend>@T("AWS S3 Setting")</legend>
 
     <div>
-        @Html.LabelFor(m => m.UseLocalStackS3)
         @Html.CheckBoxFor(m => m.UseLocalStackS3)
+        @Html.LabelFor(m => m.UseLocalStackS3, new { @class = "forcheckbox" })
         <span class="hint">files saved to Codesanook.AmazonS3/Docker/localstack-data/s3</span>
     </div>
 
@@ -33,9 +33,11 @@
     </div>
 
     <div>
-        @Html.LabelFor(m => m.AwsS3PublicUrl)
-        @Html.TextBoxFor(m => m.AwsS3PublicUrl, new { @class = "text large" })
-        @Html.ValidationMessageFor(m => m.AwsS3PublicUrl, "*")
-        <span class="hint">e.g. http://static.example.com for CNAME that points to static.example.com.s3.amazonaws.com.</span>
+        @Html.CheckBoxFor(m => m.MapSubdomainToBucketName)
+        @Html.LabelFor(m => m.MapSubdomainToBucketName, new { @class = "forcheckbox" })
+        <span class="hint">
+            Check if you map subdomain to S3 bucket name.
+            e.g. http://static.example.com for CNAME that points to static.example.com.s3.amazonaws.com.
+        </span>
     </div>
 </fieldset>

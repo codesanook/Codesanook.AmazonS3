@@ -23,9 +23,10 @@ namespace Codesanook.AmazonS3.Models {
             set => this.Store(x => x.AwsS3BucketName, value);
         }
 
-        public string AwsS3PublicUrl {
-            get => this.Retrieve(x => x.AwsS3PublicUrl);
-            set => this.Store(x => x.AwsS3PublicUrl, value);
+        // https://stackoverflow.com/a/18766082/1872200
+        public bool MapSubdomainToBucketName {
+            get => this.Retrieve(x => x.MapSubdomainToBucketName);
+            set => this.Store(x => x.MapSubdomainToBucketName, value);
         }
     }
 }
