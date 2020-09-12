@@ -44,6 +44,7 @@ namespace Codesanook.AmazonS3.Services {
                     cleanPath
                 } :
                 awsS3SettingPart.Value.MapSubdomainToBucketName ? new[] {
+                    "https://",
                     awsS3SettingPart.Value.AwsS3BucketName,
                     cleanPath
                 } :
@@ -63,6 +64,7 @@ namespace Codesanook.AmazonS3.Services {
                     awsS3SettingPart.Value.AwsS3BucketName
                 } :
                 awsS3SettingPart.Value.MapSubdomainToBucketName ? new[] {
+                    "https://",
                     awsS3SettingPart.Value.AwsS3BucketName
                 } :
                 new[] {
