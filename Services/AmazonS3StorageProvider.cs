@@ -35,50 +35,51 @@ namespace Codesanook.AmazonS3.Services {
 
         public bool FileExists(string path) => GetS3File(path).Exists;
 
-        public string GetPublicUrl(string path) {
-            var cleanPath = CleanPath(path).Replace("\\", "/");
-            var url =
-                awsS3SettingPart.Value.UseLocalStackS3 ? new[] {
-                    awsS3SettingPart.Value.LocalStackS3ServiceUrl,
-                    awsS3SettingPart.Value.AwsS3BucketName,
-                    cleanPath
-                } :
-                awsS3SettingPart.Value.MapSubdomainToBucketName ? new[] {
-                    "https://",
-                    awsS3SettingPart.Value.AwsS3BucketName,
-                    cleanPath
-                } :
-                new[] {
-                    awsS3SettingPart.Value.AwsS3ServiceUrl,
-                    awsS3SettingPart.Value.AwsS3BucketName,
-                    cleanPath
-                };
-            return UrlHelper.Combine(url);
+        public string GetPublicUrl(string storagePath) {
+            var cleanPath = CleanPath(storagePath).Replace("\\", "/");
+            var urlComponent =
+                awsS3SettingPart.Value.UseLocalStackS3 ? (
+                    RootUri: new Uri(awsS3SettingPart.Value.LocalStackS3ServiceUrl),
+                    Paths: new[] { awsS3SettingPart.Value.AwsS3BucketName, cleanPath }
+                ) :
+                awsS3SettingPart.Value.MapSubdomainToBucketName ? (
+                    RootUri: new UriBuilder("https", awsS3SettingPart.Value.AwsS3BucketName).Uri,
+                    Paths: new[] { cleanPath }
+                ) : (
+                   RootUri: new Uri(awsS3SettingPart.Value.AwsS3ServiceUrl),
+                   Paths: new[] { awsS3SettingPart.Value.AwsS3BucketName, cleanPath }
+                );
+
+            return GetUrlFromComponent(urlComponent);
         }
 
-        public string GetStoragePath(string url) {
+        public string GetStoragePath(string storageUrl) {
 
-            var storageUrl =
-                awsS3SettingPart.Value.UseLocalStackS3 ? new[] {
-                    awsS3SettingPart.Value.LocalStackS3ServiceUrl,
-                    awsS3SettingPart.Value.AwsS3BucketName
-                } :
-                awsS3SettingPart.Value.MapSubdomainToBucketName ? new[] {
-                    "https://",
-                    awsS3SettingPart.Value.AwsS3BucketName
-                } :
-                new[] {
-                    awsS3SettingPart.Value.AwsS3ServiceUrl,
-                    awsS3SettingPart.Value.AwsS3BucketName
-                };
+            var urlComponent =
+                awsS3SettingPart.Value.UseLocalStackS3 ? (
+                    RootUri: new Uri(awsS3SettingPart.Value.LocalStackS3ServiceUrl),
+                    Paths: new[] { awsS3SettingPart.Value.AwsS3BucketName }
+                ) :
+                awsS3SettingPart.Value.MapSubdomainToBucketName ? (
+                    RootUri: new UriBuilder("https", awsS3SettingPart.Value.AwsS3BucketName).Uri,
+                    Paths: Array.Empty<string>()
+                ) : (
+                   RootUri: new Uri(awsS3SettingPart.Value.AwsS3ServiceUrl),
+                   Paths: new[] { awsS3SettingPart.Value.AwsS3BucketName }
+                );
 
-            var rootPath = UrlHelper.Combine(storageUrl);
-            if (string.IsNullOrWhiteSpace(url) || url.Length < rootPath.Length) {
-                return rootPath;
+            var rootUrl = GetUrlFromComponent(urlComponent);
+            if (string.IsNullOrWhiteSpace(storageUrl) || storageUrl.Length < rootUrl.Length) {
+                return rootUrl;
             }
 
-            return url.Substring(rootPath.Length);
+            return storageUrl.Substring(rootUrl.Length);
         }
+
+        private static string GetUrlFromComponent((Uri RootUri, string[] Paths) urlComponent) =>
+            new UrlHelper(urlComponent.RootUri)
+                .AppendPathSegments(urlComponent.Paths)
+                .ToString();
 
         public IStorageFile GetFile(string path) =>
             new AmazonS3StorageFile(GetS3File(path), this);
